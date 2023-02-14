@@ -40,3 +40,35 @@ pip_parse(
 load("@common_pip//:requirements.bzl", "install_deps")
 # Call it to define repos for your requirements.
 install_deps()
+
+# Docker related imports
+http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
+)
+
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
+
+load("@io_bazel_rules_docker//python3:image.bzl", _py_image_repos = "repositories")
+
+_py_image_repos()
+
+load("@io_bazel_rules_docker//container:pull.bzl", "container_pull")
+
+container_pull(
+    name = "python_linux_image",
+    architecture = "amd64",
+    registry = "index.docker.io",
+    repository = "library/python",
+    tag = "3.10",
+    digest = "sha256:ba66cb1882129d8b9f10d93200e9ddc4bb43ef241293cf33b3d98f4e0ad3e157",
+)

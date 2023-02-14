@@ -1,2 +1,4 @@
-clean --async
+clean --async --expunge
 test --test_output=errors
+# https://github.com/bazelbuild/rules_docker/issues/2052
+build --@io_bazel_rules_docker//transitions:enable=false
