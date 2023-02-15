@@ -1,12 +1,12 @@
-load("@io_bazel_rules_docker//python3:image.bzl", py_image = "py3_image")
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 
-py_binary(
+py_library(
     name = "flask_web",
     srcs = [
         ":hello.py",
     ],
-    main = ":hello.py",
+    # main = ":hello.py",
     deps = [
         "@common_pip_flask//:pkg",
     ],
@@ -31,7 +31,7 @@ container_image(
     # ],
 )
 
-py_image(
+py3_image(
     name = "flask_web_image",
     base = "python_image",
     srcs = [
@@ -39,22 +39,24 @@ py_image(
     ],
     main = "hello.py",
     deps = [":flask_web"],
+    toolchains = [
+        "//:container_py_toolchain",
+    ],
 )
 
 
 
-# container_image(
-#     name = "container_image",
-#     base = "@python_linux_image//image",
-#     symlinks = {
-#         "/usr/bin/python": "/usr/bin/python3",
-#     },
-#     files = [
-#         ":hello.py",
-#         ":flask_web",
-#     ],
-#     cmd = [
-#         "sleep 99999",
-#         "99999999",
-#     ],
-# )
+container_image(
+    name = "container_image",
+    base = "@python_linux_image//image",
+    files = [
+        ":hello.py",
+        ":flask_web",
+        "//:requirements.in",
+    ],
+    cmd = [
+        "sh",
+        "-c",
+        "pip3 install -r requirements.in; python3 hello.py",
+    ],
+)

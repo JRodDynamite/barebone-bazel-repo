@@ -72,3 +72,5 @@ container_pull(
     tag = "3.10",
     digest = "sha256:ba66cb1882129d8b9f10d93200e9ddc4bb43ef241293cf33b3d98f4e0ad3e157",
 )
+
+register_toolchains(":container_py_toolchain")
